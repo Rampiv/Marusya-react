@@ -1,0 +1,1 @@
+export { AddGenreImage } from "./AddGenreImage"

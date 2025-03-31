@@ -1,0 +1,16 @@
+@use "../../../styles/style.scss" as *;
+.poster {
+  border-radius: 24px;
+  height: inherit;
+}
+.poster_default {
+  transform: scale(1.5);
+}
+.poster-title-default {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: $black;
+}

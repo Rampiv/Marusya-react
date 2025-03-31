@@ -1,0 +1,65 @@
+@use "../../styles/style.scss" as *;
+
+.btn-standart {
+  @include btnReset();
+  @include standartTransition();
+  @include flexible();
+}
+.btn-type1 {
+  @include standartBtnType1();
+  font-family: Play;
+  font-weight: 700;
+  font-size: $fontsize2;
+  line-height: 24px;
+  color: $white;
+  @media (hover) {
+    &:hover {
+      background-color: $color11;
+    }
+  }
+  &:focus {
+    background-color: $color11;
+  }
+  &:active {
+    background-color: $color4;
+    outline: 1px solid $color1;
+  }
+}
+
+.btn-type2 {
+  @include standartBtnType2();
+  font-family: Play;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  @media (hover) {
+    &:hover {
+      background-color: $color12;
+    }
+  }
+  &:focus {
+    background-color: $color12;
+  }
+  &:active {
+    background-color: $white;
+    color: $black;
+  }
+}
+
+.btn-type3 {
+  @include standartBtnType3();
+  @media (hover) {
+    &:hover {
+      background-color: $color12;
+    }
+  }
+  &:focus {
+    background-color: $color12;
+  }
+  &:active {
+    background-color: $white;
+    svg {
+      mix-blend-mode: difference;
+    }
+  }
+}

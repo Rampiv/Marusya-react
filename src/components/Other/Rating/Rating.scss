@@ -1,0 +1,37 @@
+@use "../../../styles/style.scss" as *;
+.rating {
+  @include flexible();
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-weight: 700;
+  &__svg {
+    margin-right: 4px;
+  }
+}
+.rating_yellow {
+  background-color: $color8;
+}
+.rating_green {
+  background-color: $color2;
+}
+.rating_grey {
+  background-color: $color9;
+}
+.rating_red {
+  background-color: $color10;
+}
+
+.rating-small {
+    @include flexible();
+    padding: 5px 8px;
+    border-radius: 16px;
+    font-family: Play;
+    font-weight: 700;
+    font-size: $fontsize5;
+    line-height: 16px;
+    &__svg {
+      margin-right: 4px;
+      width: 10px;
+      height: 10px;
+    }
+  }

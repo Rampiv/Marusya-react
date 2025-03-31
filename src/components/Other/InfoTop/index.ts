@@ -1,0 +1,1 @@
+export { InfoTop } from "./InfoTop"

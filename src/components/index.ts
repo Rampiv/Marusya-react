@@ -1,0 +1,5 @@
+export { Header } from "./Header"
+export { Hero } from "./Hero"
+export { Footer } from "./Footer"
+export { Loader, Poster, AddGenreImage } from "./Other"
+export { TopMovies } from "./TopMovies"

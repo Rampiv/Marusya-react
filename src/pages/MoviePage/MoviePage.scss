@@ -1,0 +1,39 @@
+@use "../../styles/style.scss" as *;
+.about {
+  &__list {
+    @include listReset();
+    @include flexible();
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    &-item {
+      @include flexible();
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
+      font-family: Play;
+      font-weight: 400;
+      font-size: $fontsize2;
+      line-height: 24px;
+      color: $white;
+    }
+  }
+  &__left {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    width: 40%;
+    gap: 10px;
+  }
+  &__param {
+    @include textReset();
+    text-wrap: nowrap;
+  }
+  &__dot {
+    max-width: 100%;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px dotted $white;
+    opacity: 0.5;
+  }
+}

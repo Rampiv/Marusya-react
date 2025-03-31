@@ -1,0 +1,51 @@
+@use "../../../styles/style.scss" as *;
+
+.infotop {
+  @include listReset();
+  @include flexible();
+  gap: 16px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  &__item {
+    font-size: $fontsize2;
+  }
+  &__item:nth-child(n + 2) {
+    opacity: 70%;
+  }
+  &__genre {
+    @include listReset();
+    @include flexible();
+    gap: 16px;
+    flex-wrap: wrap;
+    &-item {
+      font-size: $fontsize2;
+    }
+  }
+}
+
+.infotop-small {
+  @include listReset();
+  @include flexible();
+  gap: 16px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  &__item {
+    font-size: $fontsize6;
+    font-family: Play;
+    font-weight: 400;
+    line-height: 20px;
+  }
+  &__item-small:nth-child(n + 2) {
+    opacity: 70%;
+  }
+  &__genre {
+    @include listReset();
+    @include flexible();
+    gap: 12px;
+    flex-wrap: wrap;
+    &-item {
+      font-size: $fontsize6;
+    }
+  }
+}

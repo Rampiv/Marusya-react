@@ -1,0 +1,142 @@
+@use "../../styles/style.scss" as *;
+
+.auth {
+  @include flexible();
+  flex-direction: column;
+  row-gap: 40px;
+
+  padding: 64px 40px;
+
+  max-width: 420px;
+  width: 100%;
+  min-height: 450px;
+
+  border-radius: 24px;
+  z-index: 3;
+
+  background-color: $white;
+
+  .logo {
+    &-text {
+      color: $black;
+    }
+  }
+
+  &__form {
+    @include flexible();
+    flex-direction: column;
+    row-gap: 24px;
+    position: relative;
+
+    max-width: 100%;
+    width: 100%;
+  }
+
+  &__fieldset {
+    @include flexible();
+    flex-direction: column;
+    row-gap: 12px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border-style: none;
+  }
+
+  &__label {
+    position: relative;
+    width: 100%;
+    outline: none;
+    border: none;
+    &-input {
+      width: 100%;
+      color: $black;
+      padding: 16px 16px 16px 52px;
+      outline: 1px solid $black;
+      border: none;
+      border-radius: 8px;
+      font-family: Play;
+      font-weight: 400;
+      font-size: $fontsize2;
+      line-height: 24px;
+
+      &:hover {
+        outline: 1px solid $color13;
+        border-radius: 8px;
+        svg {
+          path {
+            fill: $color13;
+          }
+        }
+      }
+      &:focus {
+        outline: 1px solid $color13;
+        border-radius: 8px;
+        svg {
+          path {
+            fill: $color13;
+          }
+        }
+      }
+    }
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      display: block;
+      transform: translateY(-50%);
+      path {
+        fill: $black;
+        fill-opacity: 0.4;
+      }
+    }
+
+    &:hover {
+      svg {
+        path {
+          fill: $color13;
+        }
+      }
+    }
+    &:focus {
+      svg {
+        path {
+          fill: $color13;
+        }
+      }
+    }
+  }
+
+  &__btn-primary {
+    @include standartBtnType1();
+    @include standartTransition();
+    width: 100%;
+    border: none;
+  }
+  &__btn-secondary {
+    @include btnReset();
+    @include standartTransition();
+    font-family: Play;
+    font-weight: 700;
+    font-size: $fontsize2;
+    line-height: 24px;
+    color: $black;
+    &:hover {
+      opacity: 0.5;
+    }
+    &:focus {
+      opacity: 0.5;
+    }
+    &:active {
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: 1221px) {
+  .auth{
+    .logo{
+      margin-right: 0;
+    }
+  }
+}

@@ -1,0 +1,102 @@
+@use "./styles/style.scss" as *;
+
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+* {
+  font-size: $fontsize1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Play", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1 {
+  display: none;
+}
+
+/* Global */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.content-common {
+  padding: 0px 80px;
+}
+.App {
+  background: $background;
+  min-height: 100vh;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: auto 1fr auto;
+  position: relative;
+}
+.main {
+  position: relative;
+}
+.hide {
+  display: none;
+}
+.visible {
+  display: flex;
+}
+
+.h2-common {
+  @include textReset();
+  font-family: Play;
+  font-weight: 700;
+  font-size: $fontsize7;
+  line-height: 48px;
+  color: $white;
+  margin-bottom: 64px;
+}
+
+@media (max-width: 1221px) {
+  .section-common {
+    padding: 0 18.5px;
+  }
+  .cards__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: -80px 0 -60px;
+    padding: 80px 20px 60px;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 375px) {
+  body {
+    width: 375px;
+  }
+}
+
+// About z-index
+// 0 - all
+// 1 - overlay
+// 2 - header search; search__wrapper; overlay_auth
+// 3 - header search icon
+// 4 - modal

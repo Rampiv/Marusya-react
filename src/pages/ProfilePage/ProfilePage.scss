@@ -1,0 +1,50 @@
+@use "../../styles/style.scss" as *;
+
+.profile {
+  padding: 32px 0 0;
+  &__btn {
+    @include flexible();
+    justify-content: flex-start;
+    gap: 64px;
+    margin-bottom: 64px;
+    &-common {
+      @include btnReset();
+      @include flexible();
+      @include standartTransition();
+      padding: 12px 0;
+      column-gap: 12px;
+      font-family: Play;
+      font-size: 24px;
+      line-height: 32px;
+      color: $white;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      border-bottom: 1.5px solid transparent;
+      transition-property: color, border-bottom-color;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-in-out;
+      &:hover {
+        border-bottom: 1px solid $color5;
+      }
+      &:focus {
+        border-bottom: 1px solid $color5;
+      }
+    }
+  }
+  &__cards-list {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1221px) {
+  .profile {
+    .content-common {
+      padding: 0;
+    }
+    .h2-common,
+    &__btn {
+      padding: 0 80px;
+    }
+  }
+}

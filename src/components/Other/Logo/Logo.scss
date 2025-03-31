@@ -1,0 +1,28 @@
+@use "../../../styles/style.scss" as *;
+
+.logo {
+  @include flexible();
+  @include standartTransition();
+  outline: none;
+  max-width: fit-content;
+  width: 100%;
+  &-img {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+  }
+  &-text {
+    @include textReset();
+    color: $white;
+    font-weight: 700;
+    font-size: $fontsize4;
+    letter-spacing: 1px;
+  }
+
+  &:focus {
+    text-shadow: $white 1px 0 5px;
+  }
+  &:active {
+    text-shadow: $white 1px 0 10px;
+  }
+}

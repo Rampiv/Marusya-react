@@ -1,0 +1,17 @@
+@use "../../styles/style.scss" as *;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: $black;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.overlay_auth{
+  z-index: 2;
+}

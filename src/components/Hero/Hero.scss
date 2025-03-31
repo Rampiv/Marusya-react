@@ -1,0 +1,76 @@
+@use "../../styles/style.scss" as *;
+
+.hero {
+  position: relative;
+  padding: 32px 0;
+  margin-bottom: 40px;
+  &__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    color: $white;
+    gap: 10px;
+    align-items: center;
+  }
+  &__description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  &__title {
+    @include textReset();
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 56px;
+    margin-bottom: 16px;
+  }
+  &__text {
+    @include textReset();
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 32px;
+    opacity: 70%;
+    margin-bottom: 60px;
+  }
+  &__list {
+    @include listReset();
+    @include flexible();
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  &__image {
+    max-width: 680px;
+    width: 100%;
+    min-height: 552px;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 1221px) {
+  .hero {
+    &__content {
+      grid-template-columns: 1fr;
+    }
+    &__description {
+      order: 1;
+    }
+    &__image {
+      order: 0;
+      max-width: 100%;
+    }
+  }
+}
+
+@media (max-width: 410px) {
+  .hero__list {
+    .hero__list-item {
+      &:nth-child(1) {
+        width: 100%;
+        .hero__btn-trailer {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

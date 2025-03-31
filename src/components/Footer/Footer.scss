@@ -1,0 +1,29 @@
+@use "../../styles/style.scss" as *;
+
+.footer {
+  padding: 42px;
+  margin-top: auto;
+  &__list {
+    @include listReset();
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+  }
+  &__link {
+    svg {
+      border-radius: 20%;
+      @include standartTransition();
+      @media (hover) {
+        &:hover {
+          box-shadow: 0px 0px 5px 1px $color7;
+        }
+      }
+      &:focus {
+        box-shadow: 0px 0px 5px 1px $color7;
+      }
+      &:active {
+        box-shadow: 0px 0px 10px 10px $color7;
+      }
+    }
+  }
+}

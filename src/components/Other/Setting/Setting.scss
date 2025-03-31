@@ -1,0 +1,58 @@
+@use "../../../styles/style.scss" as *;
+
+.setting {
+  &__list {
+    @include listReset();
+    @include flexible();
+    width: 100%;
+    flex-direction: column;
+    row-gap: 40px;
+    margin-bottom: 64px;
+    &-item {
+      @include flexible();
+      justify-content: flex-start;
+      width: 100%;
+      column-gap: 16px;
+    }
+  }
+  &__list-personal {
+    @include listReset();
+    @include flexible();
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  &__icon {
+    @include flexible();
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: rgb(255, 255, 255, 0.5);
+    &-text {
+      color: $white;
+      font-family: Play;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 32px;
+    }
+    svg {
+      path {
+        fill: $white;
+        fill-opacity: 1;
+      }
+    }
+  }
+  &__title {
+    font-family: Play;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: $white;
+  }
+  &__descr {
+    font-family: Play;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: $white;
+  }
+}

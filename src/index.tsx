@@ -10,7 +10,7 @@ if (container) {
 
   root.render(
     <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename={'/Marusya-react'}>
         <App />
       </BrowserRouter>
     </StrictMode>,

@@ -9,6 +9,7 @@ import { Overlay } from "@ui-kit/Overlay"
 import { Modal } from "@ui-kit/Modal"
 import { AuthModal } from "../Auth"
 import Api from "../../api/api"
+import { useSessionContext } from "@contexts/Session"
 
 interface AuthLinkProps {
   text: string
@@ -59,7 +60,8 @@ const AuthLink = memo(({ text, onClick, link }: AuthLinkProps) => {
 })
 
 export const Header = () => {
-  const [movies, profile] = useContext(AllMoviesContext)
+  const [movies] = useContext(AllMoviesContext)
+  const { profile } = useSessionContext()
 
   const [searchResult, setSearchResult] = useState<Movie[]>([])
   const [searchState, setSearchState] = useState({
@@ -70,7 +72,6 @@ export const Header = () => {
     isVisibleIconIntoInput: true,
   })
   const [authState, setAuthState] = useState({
-    authName: "Войти",
     authLink: "",
     isOpenModal: false,
     isOpenOverlay: false,
@@ -184,7 +185,6 @@ export const Header = () => {
         if (res) {
           setAuthState(prev => ({
             ...prev,
-            authName: `${res.name.charAt(0).toUpperCase()}${res.name.slice(1)}`,
             authLink: "/profile",
             isOpenModal: false,
             isOpenOverlay: false,
@@ -198,7 +198,6 @@ export const Header = () => {
     if (profile) {
       setAuthState(prev => ({
         ...prev,
-        authName: `${profile.name.charAt(0).toUpperCase()}${profile.name.slice(1)}`,
         authLink: "/profile",
       }))
       setAuthState(prev => ({
@@ -208,6 +207,14 @@ export const Header = () => {
       }))
     }
   }, [profile])
+
+  const getAuthLinkText = () => {
+    if (!profile) {
+      return "Войти"
+    }
+
+    return `${profile.name.charAt(0).toUpperCase()}${profile.name.slice(1)}`
+  }
 
   return (
     <header className="header">
@@ -260,7 +267,7 @@ export const Header = () => {
           </button>
           <AuthLink
             onClick={handleAuthBtn}
-            text={authState.authName}
+            text={getAuthLinkText()}
             link={authState.authLink}
           />
         </div>

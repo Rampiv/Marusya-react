@@ -1,21 +1,19 @@
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import "./ProfilePage.scss"
-import { ProfilePageContext } from "../../App"
 import { HeartIcon, UserIcon } from "@assets/icons"
 import React from "react"
 import Api from "../../api/api"
 import { Loader } from "../../components"
 import { CardsList, ErrorMessage, Setting } from "../../components/Other"
 import type { Movie } from "../../models"
-import { useNavigate } from "react-router"
+import { useSessionContext } from "@contexts/Session"
 
 const HeartIconMemo = React.memo(HeartIcon)
 const UserIconMemo = React.memo(UserIcon)
 
 export const ProfilePage = () => {
-  const profile = useContext(ProfilePageContext)
+  const { profile, logout, isPending } = useSessionContext()
   // при переходе сразу же после авторизации profile === null !!!!!!!!!!!!!!!!!!!!!!!!!!
-  console.log(profile);
   const [isLoading, setIsLoading] = useState(true)
   const [favoriteFilms, setFavoriteFilms] = useState<Movie[]>([])
   const [error, setError] = useState("")
@@ -53,20 +51,6 @@ export const ProfilePage = () => {
     [fetchFavoriteFilms],
   )
 
-  let navigate = useNavigate()
-
-  const logout = useCallback(async () => {
-    setIsLoading(true)
-
-    Api.logoutUser()
-      .then(() => {
-        navigate("/")
-      })
-      .catch(error => {
-        console.error("Ошибка удаления фильма:", error)
-      })
-  }, [navigate])
-
   useEffect(() => {
     if (profile?.favorites) {
       fetchFavoriteFilms(profile.favorites)
@@ -101,12 +85,12 @@ export const ProfilePage = () => {
           {error && (
             <ErrorMessage error={error} visible={error ? true : false} />
           )}
-          {isLoading ? (
+          {isLoading || isPending ? (
             <Loader />
           ) : isSettings ? (
             <Setting
-              fullname={`${profile.name} ${profile.surname}`}
-              email={profile.email}
+              fullname={`${profile?.name} ${profile?.surname}`}
+              email={profile?.email ?? ""}
               onClick={logout}
             />
           ) : (

@@ -4,7 +4,7 @@ import React, { createContext, useEffect, useMemo, useState } from "react"
 import Api from "./api/api"
 import { GenresPage, MainPage, MoviePage, ProfilePage } from "./pages"
 import "./App.scss"
-import type { Profile } from "./models"
+import { SessionContextProvider } from "@contexts/Session"
 
 export const MainPageContext = createContext<any>(undefined)
 export const GenresContext = createContext<any>(undefined)
@@ -21,12 +21,15 @@ export default function App() {
   const [topMovies, setTopMovies] = useState()
   const [genres, setGenres] = useState()
   const [movies, setMovies] = useState()
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   //memo
   const topMoviesMemo = useMemo(() => ({ topMovies }), [topMovies])
   const genresMemo = useMemo(() => ({ genres }), [genres])
+<<<<<<< HEAD
+=======
+  const moviesMemo = useMemo(() => movies, [movies])
+>>>>>>> feat-session-provider
 
   useEffect(() => {
     // получаю все данные для контекста
@@ -47,7 +50,9 @@ export default function App() {
       }
     }
     fetchData()
+  }, [])
 
+<<<<<<< HEAD
     // если добавить строчку ниже, то авторизация при перезагрузке страницы будет сбрасываться. !!!!!!!!!!!!!!!!!
     // if (!profile) return
     Api.getProfile().then(res => {
@@ -107,5 +112,61 @@ export default function App() {
       </main>
       <Footer />
     </div>
+=======
+  const profileMemo = null
+
+  return (
+    <SessionContextProvider>
+      <div className="App">
+        <AllMoviesContext.Provider value={[moviesMemo, profileMemo]}>
+          <HeaderMemo />
+        </AllMoviesContext.Provider>
+        <main className="main">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isLoading ? (
+                  <Loader />
+                ) : (
+                  <MainPageContext.Provider
+                    value={[topMoviesMemo, profileMemo]}
+                  >
+                    <MainPageMemo />
+                  </MainPageContext.Provider>
+                )
+              }
+            />
+            <Route
+              path="/genres"
+              element={
+                isLoading ? (
+                  <Loader />
+                ) : (
+                  <GenresContext.Provider value={genresMemo}>
+                    <GenresPageMemo />
+                  </GenresContext.Provider>
+                )
+              }
+            />
+            <Route path="/movie/:id" element={<MoviePageMemo />} />
+            <Route
+              path="/profile"
+              element={
+                isLoading ? (
+                  <Loader />
+                ) : (
+                  <ProfilePageContext.Provider value={profileMemo}>
+                    <ProfilePageMemo />
+                  </ProfilePageContext.Provider>
+                )
+              }
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </SessionContextProvider>
+>>>>>>> feat-session-provider
   )
 }

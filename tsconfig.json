@@ -18,7 +18,10 @@
     "paths": {
       "@ui-kit/*": ["./src/ui-kit/*"],
       "@styles/*": ["./src/styles/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@models/*": ["./src/models/*"],
+      "@api/*": ["./src/api/*"]
     }
   },
   "references": [{ "path": "./tsconfig.node.json" }]

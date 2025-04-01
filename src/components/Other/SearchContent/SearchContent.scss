@@ -6,7 +6,8 @@
   right: 0;
   max-width: 559px;
   width: 100%;
-  height: 476px;
+  height: fit-content;
+  max-height: 476px;
   overflow: hidden;
   border-radius: 8px;
   background-color: $color1;

@@ -10,13 +10,18 @@ import { Modal } from "@ui-kit/Modal"
 import { YoutubeFrame } from "@ui-kit/YoutubeFrame"
 import { Overlay } from "@ui-kit/Overlay"
 import { FillHeartIcon, HeartIcon } from "@assets/icons"
+import { useSessionContext } from "@contexts/Session"
+
+interface Props {
+  FavoriteCallback: (value: "open" | "close") => void
+}
 
 const MemoizedHero = memo(Hero)
 const MemoizedYoutubeFrame = memo(YoutubeFrame)
 const FillHeartIconMemo = memo(FillHeartIcon)
 const HeartIconMemo = memo(HeartIcon)
 
-export const MoviePage = () => {
+export const MoviePage = ({ FavoriteCallback }: Props) => {
   const { id } = useParams()
   const [isLoading, setIsLoading] = useState(true)
   const [movie, setMovie] = useState<Movie>()
@@ -24,6 +29,8 @@ export const MoviePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isOpenOverlay, setIsOpenOverlay] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
+
+  const { profile } = useSessionContext()
 
   useEffect(() => {
     if (id) {
@@ -48,11 +55,21 @@ export const MoviePage = () => {
     setIsModalOpen(false)
   }
   const handleFavourite = useCallback(() => {
-    if (!isFavorite) {
-      Api.addFavorite(String(id))
-      setIsFavorite(true)
+    if (!profile) {
+      FavoriteCallback("open")
+    } else {
+      // если фильм в избранном - удалить
+      if (isFavorite && id) {
+        Api.deleteFavorite(Number(id))
+        setIsFavorite(false)
+      }
+      // наоборот - добавить
+      if (!isFavorite) {
+        Api.addFavorite(String(id))
+        setIsFavorite(true)
+      }
     }
-  }, [isFavorite, id])
+  }, [profile, isFavorite, FavoriteCallback, id])
 
   useEffect(() => {
     Api.getProfile().then(res => {

@@ -1,35 +1,45 @@
 import { Route, Routes } from "react-router"
 import { Footer, Header, Loader } from "./components"
-import React, { createContext, useEffect, useMemo, useState } from "react"
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import Api from "./api/api"
-import { GenresPage, MainPage, MoviePage, ProfilePage } from "./pages"
+import {
+  GenresFilterPage,
+  GenresPage,
+  MainPage,
+  MoviePage,
+  ProfilePage,
+} from "./pages"
 import "./App.scss"
 import { SessionContextProvider } from "@contexts/Session"
 
 export const MainPageContext = createContext<any>(undefined)
 export const GenresContext = createContext<any>(undefined)
 export const AllMoviesContext = createContext<any>(undefined)
-export const ProfilePageContext = createContext<any>(undefined)
 
 const HeaderMemo = React.memo(Header)
 const MainPageMemo = React.memo(MainPage)
 const GenresPageMemo = React.memo(GenresPage)
 const MoviePageMemo = React.memo(MoviePage)
 const ProfilePageMemo = React.memo(ProfilePage)
+const GenresFilterPageMemo = React.memo(GenresFilterPage)
 
 export default function App() {
   const [topMovies, setTopMovies] = useState()
   const [genres, setGenres] = useState()
   const [movies, setMovies] = useState()
   const [isLoading, setIsLoading] = useState(true)
+  const [isOpenModalAuth, setIsModalOpen] = useState(false)
 
   //memo
   const topMoviesMemo = useMemo(() => ({ topMovies }), [topMovies])
   const genresMemo = useMemo(() => ({ genres }), [genres])
-<<<<<<< HEAD
-=======
-  const moviesMemo = useMemo(() => movies, [movies])
->>>>>>> feat-session-provider
+  const moviesMemo = useMemo(() => ({ movies }), [movies])
 
   useEffect(() => {
     // получаю все данные для контекста
@@ -52,74 +62,23 @@ export default function App() {
     fetchData()
   }, [])
 
-<<<<<<< HEAD
-    // если добавить строчку ниже, то авторизация при перезагрузке страницы будет сбрасываться. !!!!!!!!!!!!!!!!!
-    // if (!profile) return
-    Api.getProfile().then(res => {
-      if (res) {
-        if (JSON.stringify(res) !== JSON.stringify(profile)) {
-          setProfile(res)
-        }
-      }
-    })
-  }, [profile])
-
-  return (
-    <div className="App">
-      <AllMoviesContext.Provider value={[movies, profile]}>
-        <HeaderMemo />
-      </AllMoviesContext.Provider>
-      <main className="main">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              isLoading ? (
-                <Loader />
-              ) : (
-                <MainPageContext.Provider value={[topMoviesMemo, profile]}>
-                  <MainPageMemo />
-                </MainPageContext.Provider>
-              )
-            }
-          />
-          <Route
-            path="/genres"
-            element={
-              isLoading ? (
-                <Loader />
-              ) : (
-                <GenresContext.Provider value={genresMemo}>
-                  <GenresPageMemo />
-                </GenresContext.Provider>
-              )
-            }
-          />
-          <Route path="/movie/:id" element={<MoviePageMemo />} />
-          <Route
-            path="/profile"
-            element={
-              isLoading ? (
-                <Loader />
-              ) : (
-                <ProfilePageContext.Provider value={profile}>
-                  <ProfilePageMemo />
-                </ProfilePageContext.Provider>
-              )
-            }
-          />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
-=======
-  const profileMemo = null
+  // всплытие состояния из MainPage в Header, чтобы без авторизации нельзя было добавить фильм в favorite
+  const FavoriteCallback = useCallback((value: "open" | "close") => {
+    setIsModalOpen(value === "open")
+  }, [])
+  // обработчик закрытия модалки
+  const handleCloseAuthModal = useCallback(() => {
+    setIsModalOpen(false)
+  }, [])
 
   return (
     <SessionContextProvider>
       <div className="App">
-        <AllMoviesContext.Provider value={[moviesMemo, profileMemo]}>
-          <HeaderMemo />
+        <AllMoviesContext.Provider value={[moviesMemo]}>
+          <HeaderMemo
+            isOpenModalAuth={isOpenModalAuth}
+            onAuthModalClose={handleCloseAuthModal}
+          />
         </AllMoviesContext.Provider>
         <main className="main">
           <Routes>
@@ -129,10 +88,8 @@ export default function App() {
                 isLoading ? (
                   <Loader />
                 ) : (
-                  <MainPageContext.Provider
-                    value={[topMoviesMemo, profileMemo]}
-                  >
-                    <MainPageMemo />
+                  <MainPageContext.Provider value={[topMoviesMemo]}>
+                    <MainPageMemo FavoriteCallback={FavoriteCallback} />
                   </MainPageContext.Provider>
                 )
               }
@@ -149,24 +106,30 @@ export default function App() {
                 )
               }
             />
-            <Route path="/movie/:id" element={<MoviePageMemo />} />
             <Route
-              path="/profile"
+              path="/genres/:genre"
               element={
                 isLoading ? (
                   <Loader />
                 ) : (
-                  <ProfilePageContext.Provider value={profileMemo}>
-                    <ProfilePageMemo />
-                  </ProfilePageContext.Provider>
+                  <AllMoviesContext.Provider value={[moviesMemo]}>
+                    <GenresFilterPageMemo />
+                  </AllMoviesContext.Provider>
                 )
               }
+            />
+            <Route
+              path="/movie/:id"
+              element={<MoviePageMemo FavoriteCallback={FavoriteCallback} />}
+            />
+            <Route
+              path="/profile"
+              element={isLoading ? <Loader /> : <ProfilePageMemo />}
             />
           </Routes>
         </main>
         <Footer />
       </div>
     </SessionContextProvider>
->>>>>>> feat-session-provider
   )
 }

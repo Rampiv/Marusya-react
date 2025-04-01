@@ -8,13 +8,18 @@ import { Logo, SearchContent } from "../Other"
 import { Overlay } from "@ui-kit/Overlay"
 import { Modal } from "@ui-kit/Modal"
 import { AuthModal } from "../Auth"
-import Api from "../../api/api"
 import { useSessionContext } from "@contexts/Session"
+import { GetName } from "../../utils"
 
 interface AuthLinkProps {
   text: string
   onClick?: (e: React.MouseEvent) => void
   link: string
+}
+
+interface HeaderProps {
+  isOpenModalAuth: boolean
+  onAuthModalClose: () => void
 }
 
 // Мемоизированные иконки
@@ -59,7 +64,7 @@ const AuthLink = memo(({ text, onClick, link }: AuthLinkProps) => {
   )
 })
 
-export const Header = () => {
+export const Header = ({ isOpenModalAuth, onAuthModalClose }: HeaderProps) => {
   const [movies] = useContext(AllMoviesContext)
   const { profile } = useSessionContext()
 
@@ -79,19 +84,30 @@ export const Header = () => {
   const [searchValue, setSearchValue] = useState("")
 
   // открытие модального окна
-  const handleAuthBtn = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    setAuthState(prev => ({
-      ...prev,
-      isOpenModal: true,
-      isOpenOverlay: true,
-    }))
-  }, [])
+  const handleAuthBtn = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault()
+      if (profile) {
+        setAuthState(prev => ({
+          ...prev,
+          authLink: "/profile",
+        }))
+      } else {
+        setAuthState(prev => ({
+          ...prev,
+          isOpenModal: true,
+          isOpenOverlay: true,
+          authLink: "",
+        }))
+      }
+    },
+    [profile],
+  )
 
   const filterMovies = useCallback(
     (term: string) => {
       if (!movies) return []
-      return movies.filter((movie: { title: string }) =>
+      return movies.movies.filter((movie: { title: string }) =>
         movie.title.toLowerCase().includes(term.toLowerCase()),
       )
     },
@@ -139,21 +155,25 @@ export const Header = () => {
     setSearchValue("")
   }, [])
 
-  const closeOverlay = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setSearchState(prev => ({
-        ...prev,
-        isOpenWrapper: false,
-        isOpenOverlay: false,
-        isMobileVisible: false,
-      }))
-      setAuthState(prev => ({
-        ...prev,
-        isOpenModal: false,
-        isOpenOverlay: false,
-      }))
-    }
-  }, [])
+  const closeOverlay = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        setSearchState(prev => ({
+          ...prev,
+          isOpenWrapper: false,
+          isOpenOverlay: false,
+          isMobileVisible: false,
+        }))
+        setAuthState(prev => ({
+          ...prev,
+          isOpenModal: false,
+          isOpenOverlay: false,
+        }))
+        onAuthModalClose()
+      }
+    },
+    [onAuthModalClose],
+  )
 
   // очистка search, закрытие всех модальных окон при клике на item результата поиска
   const searchContentClick = useCallback(() => {
@@ -176,45 +196,28 @@ export const Header = () => {
       ...prev,
       isOpenModal: false,
     }))
-  }, [])
-
-  // обратная связь с модального окна, что была произведена успешная авторизация
-  const handleChildAuthDataChange = useCallback((value: boolean) => {
-    if (value) {
-      Api.getProfile().then(res => {
-        if (res) {
-          setAuthState(prev => ({
-            ...prev,
-            authLink: "/profile",
-            isOpenModal: false,
-            isOpenOverlay: false,
-          }))
-        }
-      })
-    }
-  }, [])
+    onAuthModalClose()
+  }, [onAuthModalClose])
 
   useEffect(() => {
+    // нажатие на лайк открывает модалку
+    if (isOpenModalAuth) {
+      setAuthState(prev => ({
+        ...prev,
+        isOpenModal: true,
+        isOpenOverlay: true,
+        authLink: "",
+      }))
+    }
     if (profile) {
       setAuthState(prev => ({
         ...prev,
         authLink: "/profile",
-      }))
-      setAuthState(prev => ({
-        ...prev,
         isOpenModal: false,
         isOpenOverlay: false,
       }))
     }
-  }, [profile])
-
-  const getAuthLinkText = () => {
-    if (!profile) {
-      return "Войти"
-    }
-
-    return `${profile.name.charAt(0).toUpperCase()}${profile.name.slice(1)}`
-  }
+  }, [isOpenModalAuth, profile])
 
   return (
     <header className="header">
@@ -267,14 +270,14 @@ export const Header = () => {
           </button>
           <AuthLink
             onClick={handleAuthBtn}
-            text={getAuthLinkText()}
+            text={GetName(profile)}
             link={authState.authLink}
           />
         </div>
       </div>
       <Modal isOpen={authState.isOpenModal} onClose={closeModal}>
         <>
-          <AuthModalMemo onAuthDataChange={handleChildAuthDataChange} />
+          <AuthModalMemo />
           <Overlay
             isOpenOverlay={authState.isOpenOverlay}
             closeOverlay={closeOverlay}

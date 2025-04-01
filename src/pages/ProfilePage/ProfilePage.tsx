@@ -13,7 +13,7 @@ const UserIconMemo = React.memo(UserIcon)
 
 export const ProfilePage = () => {
   const { profile, logout, isPending } = useSessionContext()
-  // при переходе сразу же после авторизации profile === null !!!!!!!!!!!!!!!!!!!!!!!!!!
+
   const [isLoading, setIsLoading] = useState(true)
   const [favoriteFilms, setFavoriteFilms] = useState<Movie[]>([])
   const [error, setError] = useState("")
@@ -52,8 +52,12 @@ export const ProfilePage = () => {
   )
 
   useEffect(() => {
-    if (profile?.favorites) {
-      fetchFavoriteFilms(profile.favorites)
+    if (profile) {
+      Api.getProfile().then(res => {
+        if (res) {
+          fetchFavoriteFilms(res.favorites)
+        }
+      })
     }
   }, [profile, fetchFavoriteFilms])
 

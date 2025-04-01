@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { Hero, Loader, TopMovies } from "../../components"
 import Api from "../../api/api"
 import { Button } from "@ui-kit/Button"
@@ -14,21 +8,25 @@ import { Modal } from "@ui-kit/Modal"
 import { YoutubeFrame } from "@ui-kit/YoutubeFrame"
 import { GetYoutubeVideoIdByURL } from "../../utils"
 import { Overlay } from "@ui-kit/Overlay"
-import { MainPageContext } from "../../App"
+import { useSessionContext } from "@contexts/Session"
 
 const HeroMemo = React.memo(Hero)
 const TopMoviesMemo = React.memo(TopMovies)
 const FillHeartIconMemo = React.memo(FillHeartIcon)
 const HeartIconMemo = React.memo(HeartIcon)
 
-export const MainPage = () => {
+interface Props {
+  FavoriteCallback: (value: "open" | "close") => void
+}
+
+export const MainPage = ({ FavoriteCallback }: Props) => {
   const [randomMovie, setRandomMovie] = useState<Movie | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isOpenOverlay, setIsOpenOverlay] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  const profile = useContext(MainPageContext)[1]
+  const { profile } = useSessionContext()
 
   useEffect(() => {
     Api.getRandomMovie()
@@ -38,12 +36,8 @@ export const MainPage = () => {
 
         if (!res?.id || !profile) return
 
-        Api.getProfile().then(profileRes => {
-          const isMovieFavorite = profileRes?.favorites?.includes(
-            String(res.id),
-          )
-          setIsFavorite(!!isMovieFavorite)
-        })
+        const isMovieFavorite = profile?.favorites?.includes(String(res.id))
+        setIsFavorite(!!isMovieFavorite)
       })
       .catch(err => {
         setIsLoading(false)
@@ -51,7 +45,7 @@ export const MainPage = () => {
       })
   }, [profile])
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     Api.getRandomMovie()
       .then(res => {
         setRandomMovie(res || null)
@@ -59,27 +53,38 @@ export const MainPage = () => {
       .catch(err => {
         console.log("err", err)
       })
-  }
+  }, [])
 
-  const handleTrailer = () => {
+  const handleTrailer = useCallback(() => {
     setIsModalOpen(true)
     setIsOpenOverlay(true)
-  }
-  const handleFavourite = useCallback(() => {
-    if (!isFavorite) {
-      Api.addFavorite(String(randomMovie?.id))
-      setIsFavorite(true)
-    }
-  }, [isFavorite, randomMovie?.id])
+  }, [])
 
-  const closeModal = () => {
+  const handleFavourite = useCallback(() => {
+    if (!profile) {
+      FavoriteCallback("open")
+    } else {
+      // если фильм в избранном - удалить
+      if (isFavorite && randomMovie?.id) {
+          Api.deleteFavorite(randomMovie.id)
+          setIsFavorite(false)
+      }
+      // наоборот - добавить
+      if (!isFavorite) {
+        Api.addFavorite(String(randomMovie?.id))
+        setIsFavorite(true)
+      }
+    }
+  }, [FavoriteCallback, isFavorite, profile, randomMovie?.id])
+
+  const closeModal = useCallback(() => {
     setIsModalOpen(false)
     setIsOpenOverlay(false)
-  }
-  const closeOverlay = () => {
+  }, [])
+  const closeOverlay = useCallback(() => {
     setIsOpenOverlay(false)
     setIsModalOpen(false)
-  }
+  }, [])
 
   const buttons = useMemo(
     () => [
@@ -102,7 +107,13 @@ export const MainPage = () => {
         <RefreshIcon />
       </Button>,
     ],
-    [handleFavourite, isFavorite, randomMovie?.id],
+    [
+      handleFavourite,
+      handleRefresh,
+      handleTrailer,
+      isFavorite,
+      randomMovie?.id,
+    ],
   )
 
   if (isLoading || !randomMovie) {

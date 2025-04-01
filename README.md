@@ -1,1 +1,1 @@
-Stack: html, scss, js, vite, react. Build ver.
+Stack: html, scss, ts, vite, react. Build ver.

@@ -1,0 +1,1 @@
+export { GenresFilterPage } from "./GenresFilterPage"

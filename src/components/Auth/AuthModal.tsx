@@ -4,24 +4,23 @@ import { ErrorMessage, Logo } from "../Other"
 import "./AuthModal.scss"
 import Api from "../../api/api"
 import React from "react"
-import { useNavigate } from "react-router"
 import { Login } from "./Login"
 import type { AuthCredentials, RegisterCredentials } from "../../models"
 import { Register } from "./Register"
+import { useSessionContext } from "@contexts/Session"
 
 // Мемоизированные иконоки
 const LogoMemo = React.memo(Logo)
 
-export const AuthModal = ({ onAuthDataChange }: any) => {
+export const AuthModal = () => {
   const [isAuth, setIsAuth] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [authCredentials, setAuthCredentials] = useState<AuthCredentials>({
     email: "",
     password: "",
   })
 
-  const navigate = useNavigate()
+  const { login, isPending: isPendingSession } = useSessionContext()
 
   const [registerCredentials, setRegisterCredentials] =
     useState<RegisterCredentials>({
@@ -35,31 +34,13 @@ export const AuthModal = ({ onAuthDataChange }: any) => {
   const handleAuthSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
-      setIsLoading(true)
-      setError(null)
 
-      await Api.authUser({
+      login({
         email: authCredentials.email,
         password: authCredentials.password,
       })
-        .then(() => {
-          onAuthDataChange(true)
-          navigate("/")
-        })
-        .catch(err => {
-          setError("Произошла ошибка при авторизации")
-          console.error("Auth error:", err)
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
     },
-    [
-      authCredentials.email,
-      authCredentials.password,
-      navigate,
-      onAuthDataChange,
-    ],
+    [authCredentials.email, authCredentials.password, login],
   )
 
   const handleRegisterSubmit = useCallback(
@@ -143,7 +124,7 @@ export const AuthModal = ({ onAuthDataChange }: any) => {
         <button
           className="auth__btn-primary btn-type1"
           type="submit"
-          disabled={isLoading}
+          disabled={isPendingSession}
         >
           {isAuth ? "Войти" : "Создать аккаунт"}
         </button>

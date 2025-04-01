@@ -27,8 +27,6 @@ export default function App() {
   //memo
   const topMoviesMemo = useMemo(() => ({ topMovies }), [topMovies])
   const genresMemo = useMemo(() => ({ genres }), [genres])
-  const moviesMemo = useMemo(() => movies, [movies])
-  const profileMemo = useMemo(() => profile, [profile])
 
   useEffect(() => {
     // получаю все данные для контекста
@@ -55,7 +53,7 @@ export default function App() {
     Api.getProfile().then(res => {
       if (res) {
         if (JSON.stringify(res) !== JSON.stringify(profile)) {
-          setProfile(res);
+          setProfile(res)
         }
       }
     })
@@ -63,7 +61,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <AllMoviesContext.Provider value={[moviesMemo, profileMemo]}>
+      <AllMoviesContext.Provider value={[movies, profile]}>
         <HeaderMemo />
       </AllMoviesContext.Provider>
       <main className="main">
@@ -74,7 +72,7 @@ export default function App() {
               isLoading ? (
                 <Loader />
               ) : (
-                <MainPageContext.Provider value={[topMoviesMemo, profileMemo]}>
+                <MainPageContext.Provider value={[topMoviesMemo, profile]}>
                   <MainPageMemo />
                 </MainPageContext.Provider>
               )
@@ -99,7 +97,7 @@ export default function App() {
               isLoading ? (
                 <Loader />
               ) : (
-                <ProfilePageContext.Provider value={profileMemo}>
+                <ProfilePageContext.Provider value={profile}>
                   <ProfilePageMemo />
                 </ProfilePageContext.Provider>
               )

@@ -4,10 +4,17 @@ import tsconfigPaths from "vite-tsconfig-paths"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/Marusya-react/',
+  base: "/Marusya-react/",
   plugins: [react(), tsconfigPaths()],
   server: {
     open: true,
+    watch: {
+      usePolling: true,
+      interval: 1000
+    },
+    hmr: {
+      overlay: true
+    }
   },
   test: {
     globals: true,

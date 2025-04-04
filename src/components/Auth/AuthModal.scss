@@ -78,6 +78,9 @@
         }
       }
     }
+    &-error{
+      outline: 1px solid $color10;
+    }
 
     svg {
       position: absolute;

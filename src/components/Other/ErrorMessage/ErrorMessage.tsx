@@ -2,7 +2,7 @@ import { memo, type FC } from "react"
 import './ErrorMessage.scss'
 
 interface ErrorProps {
-  error: string | null
+  error: any
   visible: boolean
 }
 export const ErrorMessage: FC<ErrorProps> = memo(({ error, visible }) => {

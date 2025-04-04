@@ -51,18 +51,24 @@ export const AuthModal = () => {
   const handleRegisterSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
-      if (registerCredentials.password !== registerCredentials.passwordAgain) {
-        setErrorAuth({ message: "Пароли не совпадают", result: true })
-        return
-      }
 
-      setErrorAuth({ message: "", result: false })
+      setErrorAuth({
+        message: "",
+        elements: {
+          email: "",
+          password: "",
+          passwordAgain: "",
+          name: "",
+          surname: "",
+        },
+      })
 
       register({
         email: registerCredentials.email,
         password: registerCredentials.password,
         name: registerCredentials.name,
         surname: registerCredentials.surname,
+        passwordAgain: registerCredentials.passwordAgain,
       })
     },
     [
@@ -79,19 +85,20 @@ export const AuthModal = () => {
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target
-
+      setErrorAuth({ message: "" })
       if (isAuth) {
         setAuthCredentials(prev => ({ ...prev, [name]: value }))
       } else {
         setRegisterCredentials(prev => ({ ...prev, [name]: value }))
       }
     },
-    [isAuth],
+    [isAuth, setErrorAuth],
   )
 
   const handleAuthFormChange = useCallback(() => {
     setIsAuth(!isAuth)
-  }, [isAuth])
+    setErrorAuth({ message: "" })
+  }, [isAuth, setErrorAuth])
 
   return (
     <div className="auth">
@@ -104,17 +111,26 @@ export const AuthModal = () => {
           <LoginMemo
             authCredentials={authCredentials}
             handleInputChange={handleInputChange}
+            error={{
+              email: errorAuth.elements?.email ?? "",
+              password: errorAuth.elements?.password ?? "",
+            }}
           />
         ) : (
           <RegisterMemo
-            registerCredentials={registerCredentials}
-            handleInputChange={handleInputChange}
-          />
+              registerCredentials={registerCredentials}
+              handleInputChange={handleInputChange} error={{
+                email: errorAuth.elements?.email ?? "",
+                password: errorAuth.elements?.password ?? "",
+                passwordAgain: errorAuth.elements?.passwordAgain ?? "",
+                name: errorAuth.elements?.name ?? "",
+                surname: errorAuth.elements?.surname ?? "",
+              }}          />
         )}
 
         <ErrorMessage
-          error={errorAuth.message ?? "Непредвиденная ошибка"}
-          visible={!errorAuth.result ? true : false}
+          error={errorAuth?.message}
+          visible={errorAuth ? true : false}
         />
 
         <button

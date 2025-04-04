@@ -65,6 +65,9 @@ h1 {
 .visible {
   display: flex;
 }
+.opacity{
+  opacity: 1;
+}
 
 .h2-common {
   @include textReset();

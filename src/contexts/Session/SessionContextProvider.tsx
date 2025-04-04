@@ -2,26 +2,43 @@ import Api from "@api/api"
 import type { Profile } from "@models/Profile"
 import { createContext, useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router"
+import { validateLoginForm, validateRegisterForm } from "../../utils"
 
 interface AuthResponse {
-  result: boolean
+  result?: boolean
   message?: string
+}
+
+interface RegisterResponse extends AuthResponse {
+  success?: boolean
+}
+
+interface FormErrors extends RegisterResponse {
+  message: string
+  elements?: {
+    email?: string
+    password?: string
+    passwordAgain?: string
+    name?: string
+    surname?: string
+  }
 }
 
 type SessionContextValues = {
   profile: Profile | null
   isPending: boolean
-  login: (params: { email: string; password: string }) => void
+  login: any
   logout: () => void
   register: (params: {
     email: string
     password: string
+    passwordAgain: string
     name: string
     surname: string
   }) => void
   setProfile: (profile: Profile | null) => void
-  errorAuth: AuthResponse
-  setErrorAuth: (response: AuthResponse) => void
+  errorAuth: FormErrors
+  setErrorAuth: (errorAuth: FormErrors) => void
 }
 
 export const SessionContext = createContext<SessionContextValues>({
@@ -31,7 +48,15 @@ export const SessionContext = createContext<SessionContextValues>({
   logout: () => {},
   register: () => {},
   setProfile: () => {},
-  errorAuth: { message: "", result: false },
+  errorAuth: {
+    message: "",
+    elements: {
+      email: "",
+      password: "",
+      name: "",
+      surname: "",
+    },
+  },
   setErrorAuth: () => {},
 })
 
@@ -42,9 +67,15 @@ type Props = {
 export const SessionContextProvider = ({ children }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [isPending, setIsPending] = useState(false)
-  const [errorAuth, setErrorAuth] = useState<AuthResponse>({
+  const [errorAuth, setErrorAuth] = useState<FormErrors>({
     message: "",
-    result: false,
+    elements: {
+      email: "",
+      password: "",
+      passwordAgain: "",
+      name: "",
+      surname: "",
+    },
   })
 
   const navigate = useNavigate()
@@ -74,17 +105,28 @@ export const SessionContextProvider = ({ children }: Props) => {
   const login = useCallback(
     async (params: { email: string; password: string }) => {
       setIsPending(true)
-
       try {
+        // валидация
+        const errors = validateLoginForm(params)
+        if (Object.keys(errors).length > 0) {
+          setErrorAuth({
+            message: `${errors.email ? `${errors.email}. ` : ""} ${errors.password ? `${errors.password}. ` : ""}`,
+            elements: {
+              email: errors.email || "",
+              password: errors.password || "",
+            },
+          })
+          return
+        }
+
         const { email, password } = params
         const response = await Api.authUser({ email, password })
+        if (!response.result) {
+          setErrorAuth({message: 'Ошибка авторизации'})
+        }
 
-        setErrorAuth(response)
-
-        // Если выполнится с ошибкой, до сюда не дойдет
         const profileData = await Api.getProfile()
         setProfile(profileData)
-
         goToHomePage()
       } catch (error) {
         console.log("loginError", error)
@@ -94,20 +136,45 @@ export const SessionContextProvider = ({ children }: Props) => {
     },
     [goToHomePage],
   )
+
   const register = useCallback(
     async (params: {
       email: string
       password: string
+      passwordAgain: string
       name: string
       surname: string
     }) => {
       setIsPending(true)
 
       try {
-        const { email, password, name, surname } = params
-        await Api.registerUser({ email, password, name, surname })
+        // валидация
+        const errors = validateRegisterForm(params)
+        if (Object.keys(errors).length > 0) {
+          setErrorAuth({
+            message: `${errors.email ? `${errors.email}. ` : ""}${errors.name ? `${errors.name}. ` : ""}${errors.surname ? `${errors.surname}. ` : ""}${errors.password ? `${errors.password}. ` : ""}${errors.passwordAgain ? `${errors.passwordAgain}. ` : ""}`,
+            elements: {
+              email: errors.email || "",
+              password: errors.password || "",
+              passwordAgain: errors.passwordAgain || "",
+              name: errors.name || "",
+              surname: errors.surname || "",
+            },
+          })
+          return
+        }
 
-        // Если выполнится с ошибкой, до сюда не дойдет
+        const { email, password, name, surname } = params
+        const response = await Api.registerUser({
+          email,
+          password,
+          name,
+          surname,
+        })
+        if (!response.success) {
+          setErrorAuth({message: 'Ошибка регистрации'})
+        }
+
         login({ email, password })
       } catch (error) {
         console.log("registerError", error)

@@ -1,8 +1,7 @@
 import { Link } from "react-router"
 import { GenresIcon, SearchIcon, UserIcon } from "@assets/icons"
 import "./Header.scss"
-import { useCallback, useContext, useState, memo, useEffect } from "react"
-import { AllMoviesContext } from "../../App"
+import { useCallback, useState, memo, useEffect } from "react"
 import type { Movie } from "../../models"
 import { Logo, SearchContent } from "../Other"
 import { Overlay } from "@ui-kit/Overlay"
@@ -10,6 +9,7 @@ import { Modal } from "@ui-kit/Modal"
 import { AuthModal } from "../Auth"
 import { useSessionContext } from "@contexts/Session"
 import { GetName } from "../../utils"
+import Api from "@api/api"
 
 interface AuthLinkProps {
   text: string
@@ -65,7 +65,6 @@ const AuthLink = memo(({ text, onClick, link }: AuthLinkProps) => {
 })
 
 export const Header = ({ isOpenModalAuth, onAuthModalClose }: HeaderProps) => {
-  const [movies] = useContext(AllMoviesContext)
   const { profile } = useSessionContext()
 
   const [searchResult, setSearchResult] = useState<Movie[]>([])
@@ -104,15 +103,9 @@ export const Header = ({ isOpenModalAuth, onAuthModalClose }: HeaderProps) => {
     [profile],
   )
 
-  const filterMovies = useCallback(
-    (term: string) => {
-      if (!movies) return []
-      return movies.movies.filter((movie: { title: string }) =>
-        movie.title.toLowerCase().includes(term.toLowerCase()),
-      )
-    },
-    [movies],
-  )
+  const filterMovies = useCallback(async (term: string) => {
+    return await Api.getMovies({ query: "title", value: term })
+  }, [])
 
   // функция поиска
   const handleSearchChange = useCallback(
@@ -121,7 +114,7 @@ export const Header = ({ isOpenModalAuth, onAuthModalClose }: HeaderProps) => {
       setSearchValue(searchTerm)
 
       if (searchTerm) {
-        setSearchResult(filterMovies(searchTerm))
+        setSearchResult(await filterMovies(searchTerm))
         setSearchState(prev => ({
           ...prev,
           isOpenWrapper: true,

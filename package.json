@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://rampiv.github.io/Marusya-react/",
+  "homepage": "https://rampiv.github.io/Marusya-react",
   "scripts": {
     "dev": "vite",
     "start": "vite",

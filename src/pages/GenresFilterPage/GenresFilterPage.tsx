@@ -1,27 +1,25 @@
-import { useCallback, useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import "./GenresFilterPage.scss"
-import { AllMoviesContext } from "../../App"
+
 import { Link, useParams } from "react-router"
 import { CardsList } from "../../components/Other"
 import type { Movie } from "@models/Movie"
 import { ArrowIcon } from "@assets/icons"
+import Api from "@api/api"
 
 export const GenresFilterPage = () => {
-  const [movies] = useContext(AllMoviesContext)
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>()
 
   const { genre } = useParams()
 
-  const filterMoviesByGenre = useCallback((movies: Movie[], genre: string) => {
-    return movies.filter(movie => {
-      return movie.genres.some(movieGenre => movieGenre.toLowerCase() === genre)
-    })
-  }, [])
-
   useEffect(() => {
-    if (!genre) return
-    setFilteredMovies(filterMoviesByGenre(movies.movies, genre))
-  }, [genre, filterMoviesByGenre, movies.movies])
+    async function getData() {
+      if (!genre) return
+      const response = await Api.getMovies({ query: "genre", value: genre })
+      setFilteredMovies(response)
+    }
+    getData()
+  }, [genre])
 
   return (
     <section className="genres">

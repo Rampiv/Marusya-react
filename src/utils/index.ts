@@ -4,3 +4,4 @@ export { GetYoutubeVideoIdByURL } from "./GetYoutubeVideoIdByURL"
 export { GetInitials } from "./GetInitials"
 export { FormatFullName } from "./FormatFullName"
 export { GetName } from "./GetName"
+export {validateField, validateLoginForm, validateRegisterForm} from './Validation'

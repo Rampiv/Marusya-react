@@ -1,7 +1,7 @@
 import { getGenres } from "./getGenres"
 import { getRandomMovie } from "./getRandomMovie"
 import { getTopMovies } from "./getTopMovies"
-import { getAllMovies } from "./getAllMovies"
+import { getMovies } from "./getMovies"
 import { getIdMovie } from "./getIdMovie"
 import { authUser } from "./authUser"
 import { registerUser } from "./registerUser"
@@ -14,7 +14,7 @@ const Api = {
   getRandomMovie,
   getTopMovies,
   getGenres,
-  getAllMovies,
+  getMovies,
   getIdMovie,
   authUser,
   registerUser,

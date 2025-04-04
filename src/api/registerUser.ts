@@ -17,7 +17,7 @@ export const registerUser = async (
 ): Promise<RegisterResponse> => {
   const url = `${BASE_URL}user`
 
-  try {
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -37,11 +37,5 @@ export const registerUser = async (
         message: data.message || "Authentication failed",
       }
     }
-  } catch (error) {
-    console.error("Auth error:", error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Unknown auth error",
-    }
-  }
+
 }

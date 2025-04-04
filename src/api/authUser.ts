@@ -5,40 +5,26 @@ interface AuthRequest {
   password: string
 }
 
-interface AuthResponse {
-  result: boolean
-  message?: string
-}
-
-export const authUser = async (
-  credentials: AuthRequest,
-): Promise<AuthResponse> => {
+export const authUser = async (credentials: AuthRequest) => {
   const url = `${BASE_URL}auth/login`
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-      credentials: "include",
-    })
 
-    const data = await response.json()
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+    credentials: "include",
+  })
 
-    if (data.result) {
-      return { result: true }
-    } else {
-      return {
-        result: false,
-        message: data.message || "Ошибка аутентификации",
-      }
-    }
-  } catch (error) {
-    console.error("Ошибка аутентификации:", error)
+  const data = await response.json()
+
+  if (data.result) {
+    return { result: true }
+  } else {
     return {
       result: false,
-      message: error instanceof Error ? error.message : "Неизвестная ошибка аутентификации",
+      message: data.message || "Ошибка аутентификации",
     }
   }
 }
